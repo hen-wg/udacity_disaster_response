@@ -41,6 +41,8 @@ def clean_data(df) -> pd.DataFrame:
 def save_data(df, database_filename):
     """Save data to a sqlite database."""
     engine = create_engine('sqlite:///' + database_filename)
+    # log the amount of rows written to database
+    print(f"Saving {df.shape[0]} rows to table disaster_response_messages.")
     df.to_sql('disaster_response_messages', engine,
               index=False, if_exists='replace')
 
