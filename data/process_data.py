@@ -3,8 +3,17 @@ from sqlalchemy import create_engine
 import pandas as pd
 
 
-def load_data(messages_filepath, categories_filepath) -> pd.DataFrame:
-    """Load data from csv files and merge them into a single dataframe."""
+def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
+    """
+    Load data from csv files and merge them into a single dataframe.
+
+    Args:
+        messages_filepath (str): path to messages csv file
+        categories_filepath (str): path to categories csv file
+
+    Returns:
+        df (Dataframe): merged dataframe of messages and categories
+    """
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
 
@@ -13,7 +22,14 @@ def load_data(messages_filepath, categories_filepath) -> pd.DataFrame:
 
 
 def clean_data(df) -> pd.DataFrame:
-    """Clean the data by splitting the categories into separate columns, extracting the values from category columns and removing duplicates."""
+    """Clean the data by splitting the categories into separate columns, extracting the values from category columns and removing duplicates.
+
+    Args:
+        df (Dataframe): dataframe to be cleaned
+
+    Returns:
+        df (Dataframe): cleaned dataframe
+    """
 
     # Split categories into separate columns
     categories = df['categories'].str.split(';', expand=True)
@@ -38,8 +54,14 @@ def clean_data(df) -> pd.DataFrame:
     return df
 
 
-def save_data(df, database_filename):
-    """Save data to a sqlite database."""
+def save_data(df: pd.DataFrame, database_filename: str):
+    """
+    Save data to a sqlite database.
+
+    Args:
+        df (Dataframe): dataframe to be saved in database
+        database_filename (str): database file name
+    """
     engine = create_engine('sqlite:///' + database_filename)
     # log the amount of rows written to database
     print(f"Saving {df.shape[0]} rows to table disaster_response_messages.")
