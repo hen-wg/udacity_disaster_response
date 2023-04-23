@@ -3,8 +3,6 @@ import plotly
 import pandas as pd
 import sqlite3
 
-# from nltk.stem import WordNetLemmatizer
-# from nltk.tokenize import word_tokenize
 from models.train_classifier import tokenize as tkn
 
 from flask import Flask
@@ -16,26 +14,12 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 
-# def tokenize(text):
-#     tokens = word_tokenize(text)
-#     lemmatizer = WordNetLemmatizer()
-
-#     clean_tokens = []
-#     for tok in tokens:
-#         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-#         clean_tokens.append(clean_tok)
-
-#     return clean_tokens
-
 def tokenize(text):
     # call the function from the train_classifier.py
     return tkn(text)
 
 
 # load data
-# engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-# df = pd.read_sql_table('YourTableName', engine)
-
 # connect to the database
 conn = sqlite3.connect('../data/DisasterResponse.db')
 # run a query
@@ -51,31 +35,56 @@ model = joblib.load("../models/classifier.pkl")
 def index():
 
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
+    top_10_categories_counts = df.iloc[:, 4:].sum(
+    ).sort_values(ascending=False).head(10)
+    category_names = list(top_10_categories_counts.index)
+
+    all_words = []
+    for message in df['message']:
+        all_words.extend(tokenize(message))
+    top_10_words = pd.Series(all_words).value_counts(ascending=False).head(10)
+    words = list(top_10_words.index)
 
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
                 Bar(
-                    x=genre_names,
-                    y=genre_counts
+                    x=category_names,
+                    y=top_10_categories_counts
                 )
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Top 10 disaster message categories',
                 'yaxis': {
                     'title': "Count"
                 },
                 'xaxis': {
-                    'title': "Genre"
+                    'title': "Category"
                 }
             }
-        }
+        },
+        {
+            'data': [
+                Bar(
+                    x=words,
+                    y=top_10_words
+                )
+            ],
+
+            'layout': {
+                'title': 'Top 10 disaster message words used',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Word"
+                }
+            }
+        },
+
+
     ]
 
     # encode plotly graphs in JSON
