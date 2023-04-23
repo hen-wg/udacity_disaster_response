@@ -17,6 +17,9 @@ Please see below a description of each of the folders of interest.
 - Data modelling and data pre-processing scripts.
 - Output model written to this folder. 
 
+### Notebooks                                               
+- Notebooks were used for exploration and testing only. 
+
 # Getting Started
 This project uses remote development through [Windows Subsystem for Linux 2](https://docs.microsoft.com/en-us/windows/wsl/install), or running natively from Windows. The environment is controlled using `venv` and `pip` for package management.
 
