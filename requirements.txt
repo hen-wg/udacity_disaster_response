@@ -2,3 +2,6 @@ pandas
 sqlalchemy
 scikit-learn
 nltk
+flask 
+plotly
+joblib
